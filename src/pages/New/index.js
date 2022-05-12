@@ -50,7 +50,7 @@ export default function New() {
 
     async function handleAdd() {
 
-        let uid = usuario.uid;
+        let uid = usuario.uid; // pegando o uid do usuario atual
 
         // criando chave aleatoria no banco
 
