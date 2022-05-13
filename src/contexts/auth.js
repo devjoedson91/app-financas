@@ -10,6 +10,7 @@ function AuthProvider({ children }) {
 
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [ loadingAuth, setLoadingAuth ] = useState(false);
 
 
     useEffect(() => { // executa essa função quando o app for inicializado
@@ -38,6 +39,8 @@ function AuthProvider({ children }) {
 
     async function signUp(email, password, nome) {
 
+        setLoadingAuth(true);
+
          await firebase.auth().createUserWithEmailAndPassword(email, password)
             .then( async (value) => {
 
@@ -58,6 +61,7 @@ function AuthProvider({ children }) {
 
                         setUser(data); // salvado dados no state
                         storageUser(data); // salvando dados no storage
+                        setLoadingAuth(false);
 
                     })
 
@@ -65,6 +69,7 @@ function AuthProvider({ children }) {
             .catch(err => {
 
                 alert(err.code);
+                setLoadingAuth(false);
             })
 
     }
@@ -72,6 +77,8 @@ function AuthProvider({ children }) {
     // metodo de login para usuarios
 
     async function signIn(email, password) {
+
+        setLoadingAuth(true);
 
         await firebase.auth().signInWithEmailAndPassword(email, password)
             .then(async (value) => {
@@ -90,6 +97,7 @@ function AuthProvider({ children }) {
 
                         setUser(data);
                         storageUser(data);
+                        setLoadingAuth(false); // parou de exibir o loading
 
                     })
 
@@ -97,6 +105,8 @@ function AuthProvider({ children }) {
             .catch(err => {
 
                 alert(err.code);
+                setLoadingAuth(false);
+
             })
 
     }
@@ -125,7 +135,7 @@ function AuthProvider({ children }) {
 
     return (
                                     // verificando se há usuarios logados
-        <AuthContext.Provider value={{ signed: !!user, user, signUp, signIn, signOut, loading}}>
+        <AuthContext.Provider value={{ signed: !!user, user, signUp, signIn, signOut, loading, loadingAuth}}>
 
             {children}
 

@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
+import { Alert } from 'react-native';
 import { AuthContext } from '../../contexts/auth';
 import firebase from '../../services/firebaseConnection';
-import { format } from 'date-fns';
+import { format, isPast } from 'date-fns';
 
 import HistoricoList from '../../components/HistoricoList';
 
@@ -14,7 +15,7 @@ export default function Home() {
 
   const { user } = useContext(AuthContext);
 
-  const uid = user && user.uid;
+  const uid = user && user.uid; // uid do usuario logado
 
   // useEffect vai executar uma função quando app for iniciado
 
@@ -46,7 +47,8 @@ export default function Home() {
 
                             key: childItem.key,
                             tipo: childItem.val().tipo,
-                            valor: childItem.val().valor
+                            valor: childItem.val().valor,
+                            date: childItem.val().date
 
                         }
 
@@ -62,6 +64,49 @@ export default function Home() {
 
   }, []);
 
+  function handleDelete(data) {
+
+        if (isPast(new Date(data.date))) { // verificando se a data ja passou
+
+            alert('Voce não pode excluir um registro antigo');
+            return;
+
+        }
+
+        Alert.alert(
+            'Cuidado Atenção',
+            `Voce deseja excluir ${data.tipo} - valor: ${data.valor}?`,
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel'
+                },
+                {
+                    text: 'Continuar',
+                    onPress: () => handleDeleteSuccess(data)
+                }
+            ]
+        );
+
+  }
+
+  async function handleDeleteSuccess(data) {
+
+        await firebase.database().ref('historico')
+            .child(uid).child(data.key).remove()
+                .then(async () => {
+
+                    let saldoAtual = saldo;
+                    data.tipo === 'despesa' ? saldoAtual += parseFloat(data.valor) : saldoAtual -= parseFloat(data.valor);
+
+                    await firebase.database().ref('users').child(uid)
+                        .child('saldo').set(saldoAtual);
+
+                })
+                .catch(error => console.log(error))
+
+  }
+
   return (
 
       <Background>
@@ -76,7 +121,7 @@ export default function Home() {
               showsVerticalScrollIndicator={false /* barra de rolagem lateral */}
               data={historico}
               keyExtractor={item => item.key}
-              renderItem={({ item }) => ( <HistoricoList data={item} /> )}
+              renderItem={({ item }) => ( <HistoricoList data={item} deleteItem={handleDelete} /> )}
           
           />
 
