@@ -1,12 +1,15 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Alert } from 'react-native';
+import { Alert, TouchableOpacity, Platform } from 'react-native';
 import { AuthContext } from '../../contexts/auth';
 import firebase from '../../services/firebaseConnection';
 import { format, isBefore } from 'date-fns';
 
 import HistoricoList from '../../components/HistoricoList';
 
-import { Background, Container, Nome, Saldo, Title, List } from './styles';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import DatePicker from '../../components/DatePicker';
+
+import { Background, Container, Nome, Saldo, Title, List, Area } from './styles';
 
 export default function Home() {
 
@@ -16,6 +19,9 @@ export default function Home() {
   const { user } = useContext(AuthContext);
 
   const uid = user && user.uid; // uid do usuario logado
+
+  const [newDate, setNewDate ] = useState(new Date());
+  const [show, setShow] = useState(false);
 
   // useEffect vai executar uma função quando app for iniciado
 
@@ -36,7 +42,7 @@ export default function Home() {
             await firebase.database().ref('historico') // pegue o nó/tabela historico
                 .child(uid)
                 .orderByChild('date')
-                .equalTo(format(new Date(), 'dd/MM/yyyy'))
+                .equalTo(format(newDate, 'dd/MM/yy'))
                 .limitToLast(10).on('value', snapshot => {
 
                     setHistorico([]);
@@ -62,7 +68,9 @@ export default function Home() {
 
         loadList();
 
-  }, []);
+        // criando configuração para exibir dados conforme a data informada
+
+  }, [newDate]);
 
   function handleDelete(data) {
 
@@ -118,6 +126,27 @@ export default function Home() {
 
   }
 
+  // metodo para mostrar calendario no picker
+
+  function handleShowPicker() {
+
+      setShow(true);
+
+  }
+
+  function handleClose() {
+    
+        setShow(false);
+
+  }
+
+  const onChange = (date) => {
+
+        setShow(Platform.OS === 'ios');
+        setNewDate(date);
+
+  }
+
   return (
 
       <Background>
@@ -126,7 +155,16 @@ export default function Home() {
                 <Saldo>R$ {saldo.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')} </Saldo>
           </Container>
 
-          <Title>Ultimas movimentações</Title>
+          <Area>
+
+                <TouchableOpacity onPress={handleShowPicker}>
+
+                    <Icon name='event' color='#fff' size={30} />
+                </TouchableOpacity>
+          
+                <Title>Ultimas movimentações</Title>
+          
+          </Area>
 
           <List 
               showsVerticalScrollIndicator={false /* barra de rolagem lateral */}
@@ -135,6 +173,16 @@ export default function Home() {
               renderItem={({ item }) => ( <HistoricoList data={item} deleteItem={handleDelete} /> )}
           
           />
+
+          {
+              show && (
+                 <DatePicker 
+                    onClose={handleClose}
+                    date={newDate}
+                    onChange={onChange}
+                 />
+              )
+          }
 
 
       </Background>

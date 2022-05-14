@@ -8,6 +8,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import Home from '../pages/Home';
 import Profile from '../pages/Profile';
 import New from '../pages/New';
+import CustomDrawer from '../components/CustomDrawer';
+import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 
 
 const AppDrawer = createDrawerNavigator();
@@ -17,21 +19,18 @@ function AppRoutes() {
     return (
 
         <AppDrawer.Navigator
-            drawerStyle={{
-                backgroundColor: '#171717'
-            }}
+            drawerContent={props => <CustomDrawer {...props}/>}
             screenOptions={{
-                labelStyle:{
-                    fontWeight: 'bold'
-                },
-                activeTintColor: '#fff',
-                activeBackgroundColor: '#00b94a',
-                inactiveBackgroundColor: '#000',
-                inactiveTintColor: '#ddd',
-                itemStyle: {
-                    marginVertical: 5
-                }
+                drawerActiveBackgroundColor: '#00b94a',
+                drawerActiveTintColor: '#fff',
+                drawerInactiveBackgroundColor: '#000',
+                drawerInactiveTintColor: '#ddd',
+                drawerLabelStyle: {fontWeight: 'bold'},
+                drawerStyle: {backgroundColor: '#171717'},
+                drawerItemStyle: {marginVertical: 5}
+            
             }}
+            
         >
 
             <AppDrawer.Screen name='Home' component={Home} />
