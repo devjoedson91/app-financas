@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { AuthContext } from '../../contexts/auth';
 import firebase from '../../services/firebaseConnection';
-import { format, isPast } from 'date-fns';
+import { format, isBefore } from 'date-fns';
 
 import HistoricoList from '../../components/HistoricoList';
 
@@ -36,7 +36,7 @@ export default function Home() {
             await firebase.database().ref('historico') // pegue o nó/tabela historico
                 .child(uid)
                 .orderByChild('date')
-                .equalTo(format(new Date(), 'dd/MM/yy'))
+                .equalTo(format(new Date(), 'dd/MM/yyyy'))
                 .limitToLast(10).on('value', snapshot => {
 
                     setHistorico([]);
@@ -66,7 +66,18 @@ export default function Home() {
 
   function handleDelete(data) {
 
-        if (isPast(new Date(data.date))) { // verificando se a data ja passou
+        // pegando data do item
+
+        const [diaItem, mesItem, anoItem] = data.date.split('/');
+        const dateItem = new Date(`${anoItem}/${mesItem}/${diaItem}`);
+
+        // pegando data de hoje
+
+        const formatDiaHoje = format(new Date(), 'dd/MM/yyyy');
+        const [diaHoje, mesHoje, anoHoje] = formatDiaHoje.split('/');
+        const dateHoje = new Date(`${anoHoje}/${mesHoje}/${diaHoje}`);
+
+        if (isBefore(dateItem, dateHoje)) { // isbefora compara se a primeira data é anterior a segunda
 
             alert('Voce não pode excluir um registro antigo');
             return;
