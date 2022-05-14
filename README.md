@@ -3,7 +3,7 @@
 
 # Sobre o projeto
 
-Projeto de aplicativo para controle de gastos pessoais. (Projeto em desenvolvimento)
+Projeto de aplicativo para controle de gastos pessoais. (Projeto em desenvolvimento e implementações)
 
 ## Layout mobile
 ![mobile 1](https://github.com/devjoedson91/React-prime/tree/main/assets/layout01.jpeg)
