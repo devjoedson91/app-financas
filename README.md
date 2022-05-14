@@ -14,6 +14,7 @@ Projeto de aplicativo para controle de gastos pessoais. (Projeto em desenvolvime
 ## Front end
 - Firebase
 - React Native
+- Javascript
 - Expo-cli
 - Styled components
 
