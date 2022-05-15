@@ -9,8 +9,6 @@ import Home from '../pages/Home';
 import Profile from '../pages/Profile';
 import New from '../pages/New';
 import CustomDrawer from '../components/CustomDrawer';
-import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
-
 
 const AppDrawer = createDrawerNavigator();
 
