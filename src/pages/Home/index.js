@@ -42,7 +42,7 @@ export default function Home() {
             await firebase.database().ref('historico') // pegue o nó/tabela historico
                 .child(uid)
                 .orderByChild('date')
-                .equalTo(format(newDate, 'dd/MM/yy'))
+                .equalTo(format(newDate, 'dd/MM/yyyy'))
                 .limitToLast(10).on('value', snapshot => {
 
                     setHistorico([]);

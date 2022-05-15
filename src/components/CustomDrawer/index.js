@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { View, Text, Image } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer'
 import { AuthContext } from '../../contexts/auth';
-import { color } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 
 export default function CustomDrawer(props) {
 
